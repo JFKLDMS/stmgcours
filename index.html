@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Parrainage ou Mécénat ? — Intermarché</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    font-family: -apple-system, 'Segoe UI', Calibri, sans-serif;
+    background: linear-gradient(135deg, #f5e8f5 0%, #e8e1f0 100%);
+    min-height: 100vh;
+    color: #2c2c2a;
+    overflow-x: hidden;
+  }
+
+  body {
+    padding: 14px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    color: #7B2D8E;
+    font-size: 19px;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    color: #5F5E5A;
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  .consigne {
+    background: white;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border-left: 4px solid #7B2D8E;
+    margin-bottom: 14px;
+    font-size: 13px;
+    line-height: 1.4;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .consigne strong { color: #7B2D8E; }
+
+  /* SCORE */
+  .score-bar {
+    background: white;
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    font-size: 13px;
+  }
+
+  .score-bar .score {
+    font-weight: 700;
+    color: #7B2D8E;
+    font-size: 16px;
+  }
+
+  .btn-reset {
+    background: #7B2D8E;
+    color: white;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  /* POOL */
+  .pool {
+    background: white;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 14px;
+    min-height: 80px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .pool-title {
+    text-align: center;
+    color: #7B2D8E;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+
+  .pool-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    min-height: 50px;
+    align-items: center;
+  }
+
+  .pool:empty::before {
+    content: "✓ Tout placé !";
+    color: #2e8b3a;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .card {
+    padding: 8px 12px;
+    background: white;
+    border: 2px solid #7B2D8E;
+    color: #7B2D8E;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    touch-action: none;
+    max-width: 100%;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .card:active { cursor: grabbing; }
+  .card.dragging { opacity: 0.4; transform: scale(0.9); }
+  .card.correct { animation: pop 0.4s; }
+  .card.wrong { animation: shake 0.4s; }
+
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  /* ZONES */
+  .zones {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .zone {
+    background: white;
+    border-radius: 10px;
+    padding: 12px;
+    border: 2px dashed #b8b8b8;
+    min-height: 90px;
+    transition: all 0.15s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .zone.drag-over {
+    transform: scale(1.02);
+    border-style: solid;
+    border-color: #7B2D8E;
+    box-shadow: 0 4px 12px rgba(123,45,142,0.2);
+  }
+
+  .zone-header {
+    margin-bottom: 8px;
+  }
+
+  .zone-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #7B2D8E;
+    margin-bottom: 2px;
+  }
+
+  .zone-hint {
+    font-size: 11px;
+    color: #5F5E5A;
+    font-style: italic;
+  }
+
+  .zone-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 40px;
+    padding-top: 4px;
+  }
+
+  /* VICTOIRE */
+  .victory {
+    display: none;
+    background: linear-gradient(135deg, #2e8b3a 0%, #1f6627 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(46,139,58,0.3);
+    animation: fadeIn 0.4s;
+  }
+  .victory.show { display: block; }
+  .victory h2 { font-size: 22px; margin-bottom: 6px; }
+  .victory p { font-size: 13px; opacity: 0.95; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🤝 Parrainage ou Mécénat ?</h1>
+  <p class="subtitle">Les soutiens d'Intermarché</p>
+</header>
+
+<div class="consigne">
+  <strong>📌 Consigne :</strong> Classez chaque opération d'Intermarché dans la bonne catégorie.
+</div>
+
+<div class="score-bar">
+  <span>✅ Score : <span class="score" id="score">0</span> / 8</span>
+  <button class="btn-reset" onclick="resetGame()">🔄 Recommencer</button>
+</div>
+
+<div class="pool">
+  <p class="pool-title">📦 À classer</p>
+  <div class="pool-items" id="pool"></div>
+</div>
+
+<div class="zones">
+  <div class="zone" data-zone="parrainage">
+    <div class="zone-header">
+      <div class="zone-title">PARRAINAGE</div>
+      <div class="zone-hint">Soutien AVEC contrepartie de visibilité</div>
+    </div>
+    <div class="zone-items"></div>
+  </div>
+
+  <div class="zone" data-zone="mecenat">
+    <div class="zone-header">
+      <div class="zone-title">MÉCÉNAT</div>
+      <div class="zone-hint">Soutien SANS contrepartie de visibilité</div>
+    </div>
+    <div class="zone-items"></div>
+  </div>
+</div>
+
+<div class="victory" id="victory">
+  <h2>🎉 Bravo !</h2>
+  <p>Tu maîtrises la distinction entre parrainage et mécénat !<br>
+  Le parrainage = visibilité commerciale.<br>
+  Le mécénat = engagement sans contrepartie.</p>
+</div>
+
+<script>
+  const items = [
+    { id: "1", name: "Logo Intermarché sur le maillot de l'équipe cycliste Lotto-Intermarché", zone: "parrainage" },
+    { id: "2", name: "Don de la Fondation Le Roch à l'Institut Pasteur", zone: "mecenat" },
+    { id: "3", name: "Partenariat officiel avec la Fédération Française de Football (FFF)", zone: "parrainage" },
+    { id: "4", name: "Soutien aux jeunes sapeurs-pompiers volontaires de France", zone: "mecenat" },
+    { id: "5", name: "Intermarché sponsor du TOP 14 de rugby", zone: "parrainage" },
+    { id: "6", name: "1 € reversé à la recherche médicale pour chaque galette des rois vendue", zone: "mecenat" },
+    { id: "7", name: "Programme « Petit Poucet » des Coupes de France", zone: "parrainage" },
+    { id: "8", name: "Soutien financier aux sauveteurs en mer (SNSM)", zone: "mecenat" },
+  ];
+
+  let score = 0;
+  let placed = new Set();
+  const pool = document.getElementById("pool");
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function createCards() {
+    pool.innerHTML = "";
+    document.querySelectorAll(".zone-items").forEach(z => z.innerHTML = "");
+    placed.clear();
+    score = 0;
+    document.getElementById("score").textContent = "0";
+    document.getElementById("victory").classList.remove("show");
+
+    shuffle(items).forEach(it => {
+      const el = document.createElement("div");
+      el.className = "card";
+      el.dataset.id = it.id;
+      el.dataset.zone = it.zone;
+      el.draggable = true;
+      el.textContent = it.name;
+
+      el.addEventListener("dragstart", onDragStart);
+      el.addEventListener("dragend", onDragEnd);
+      el.addEventListener("touchstart", onTouchStart, { passive: false });
+      el.addEventListener("touchmove", onTouchMove, { passive: false });
+      el.addEventListener("touchend", onTouchEnd);
+
+      pool.appendChild(el);
+    });
+  }
+
+  // --- DESKTOP ---
+  let dragged = null;
+  function onDragStart(e) {
+    dragged = e.target;
+    e.target.classList.add("dragging");
+    e.dataTransfer.effectAllowed = "move";
+  }
+  function onDragEnd(e) { e.target.classList.remove("dragging"); }
+
+  document.querySelectorAll(".zone").forEach(z => {
+    z.addEventListener("dragover", e => { e.preventDefault(); z.classList.add("drag-over"); });
+    z.addEventListener("dragleave", () => z.classList.remove("drag-over"));
+    z.addEventListener("drop", e => {
+      e.preventDefault();
+      z.classList.remove("drag-over");
+      handleDrop(z);
+    });
+  });
+
+  // --- MOBILE TACTILE ---
+  let touchClone = null;
+  let touchOffsetX = 0, touchOffsetY = 0;
+
+  function onTouchStart(e) {
+    e.preventDefault();
+    dragged = e.target;
+    const rect = dragged.getBoundingClientRect();
+    const t = e.touches[0];
+    touchOffsetX = t.clientX - rect.left;
+    touchOffsetY = t.clientY - rect.top;
+    dragged.classList.add("dragging");
+  }
+
+  function onTouchMove(e) {
+    if (!dragged) return;
+    e.preventDefault();
+    const t = e.touches[0];
+
+    if (!touchClone) {
+      touchClone = dragged.cloneNode(true);
+      touchClone.style.position = "fixed";
+      touchClone.style.pointerEvents = "none";
+      touchClone.style.zIndex = "1000";
+      touchClone.style.opacity = "0.85";
+      touchClone.style.maxWidth = "280px";
+      document.body.appendChild(touchClone);
+    }
+    touchClone.style.left = (t.clientX - touchOffsetX) + "px";
+    touchClone.style.top = (t.clientY - touchOffsetY) + "px";
+
+    document.querySelectorAll(".zone").forEach(z => z.classList.remove("drag-over"));
+    const below = document.elementFromPoint(t.clientX, t.clientY);
+    const zone = below && below.closest(".zone");
+    if (zone) zone.classList.add("drag-over");
+  }
+
+  function onTouchEnd(e) {
+    if (!dragged) return;
+    const t = e.changedTouches[0];
+    const below = document.elementFromPoint(t.clientX, t.clientY);
+    const zone = below && below.closest(".zone");
+
+    if (zone) handleDrop(zone);
+
+    if (touchClone) { touchClone.remove(); touchClone = null; }
+    dragged.classList.remove("dragging");
+    document.querySelectorAll(".zone").forEach(z => z.classList.remove("drag-over"));
+    dragged = null;
+  }
+
+  function handleDrop(zone) {
+    if (!dragged) return;
+    if (placed.has(dragged.dataset.id)) return;
+
+    const expectedZone = dragged.dataset.zone;
+    const actualZone = zone.dataset.zone;
+
+    if (expectedZone === actualZone) {
+      dragged.classList.add("correct");
+      placed.add(dragged.dataset.id);
+      score++;
+      document.getElementById("score").textContent = score;
+
+      const captured = dragged;
+      setTimeout(() => {
+        captured.classList.remove("correct");
+        captured.draggable = false;
+        captured.style.cursor = "default";
+        zone.querySelector(".zone-items").appendChild(captured);
+
+        if (score === items.length) {
+          document.getElementById("victory").classList.add("show");
+          document.getElementById("victory").scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }, 250);
+    } else {
+      dragged.classList.add("wrong");
+      const captured = dragged;
+      setTimeout(() => captured.classList.remove("wrong"), 400);
+    }
+  }
+
+  function resetGame() { createCards(); }
+
+  createCards();
+</script>
+</body>
+</html>
