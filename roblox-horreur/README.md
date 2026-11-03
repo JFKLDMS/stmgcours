@@ -18,6 +18,10 @@ Tu te réveilles dans un asile plongé dans le noir. Trouve les **5 clés rouill
 - Manches de 5 min : lobby → asile → survivants. Si le temps est écoulé, les lumières s'éteignent… et c'est fini.
 - Multijoueur : les clés sont partagées par toute l'équipe.
 
+## Le plus simple : ouvrir le fichier Roblox
+
+Télécharge `AsileDesOmbres.rbxlx` et ouvre-le avec Roblox Studio (double-clic, ou **Fichier → Ouvrir**). Clique sur **Play** ▶️ : tout est déjà en place.
+
 ## Installation dans Roblox Studio (copier-coller)
 
 1. Ouvre Roblox Studio et crée un nouveau jeu **Baseplate** (le script supprime le Baseplate tout seul).
